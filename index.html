@@ -60,6 +60,11 @@
 
   </header><!-- End Header -->
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      appendCardDiv();
+    });
+  </script>
+  <script>
     $(function(){
       $("#sidebar").load("aside.html");
     });
@@ -68,7 +73,73 @@
   <aside id="sidebar" class="sidebar">
 
   </aside><!-- End Sidebar-->
+  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+  <script>
+  function appendCardDiv() {
+  // Load the Excel file
+  const workbook = XLSX.readFile('assets/data/data.xlsx');
+  // Get the first sheet
+  const sheetName = workbook.SheetNames[0];
+  const sheet = workbook.Sheets[sheetName];
 
+  // Loop through the rows of the sheet starting at row 2 (assuming the first row contains headers)
+  for (let i = 2; ; i++) {
+    const row = sheet['A' + i]; // Assuming the image source is in column A
+
+    if (!row) break; // Break out of the loop if we've reached the end of the sheet
+
+    const imgSrc = row.v;
+    const cardTitle = sheet['B' + i].v; // Assuming the card title is in column B
+    const cardText = sheet['C' + i].v; // Assuming the card text is in column C
+
+    // Create the HTML elements for the card
+    const cardDiv = document.createElement('div');
+    cardDiv.classList.add('card');
+
+    const innerCardDiv = document.createElement('div');
+    innerCardDiv.classList.add('card', 'mb-3');
+
+    const rowDiv = document.createElement('div');
+    rowDiv.classList.add('row', 'g-0');
+
+    const imgDiv = document.createElement('div');
+    imgDiv.classList.add('col-md-4');
+
+    const img = document.createElement('img');
+    img.src = imgSrc;
+    img.classList.add('img-fluid', 'rounded-start');
+    img.alt = '...';
+
+    const colDiv = document.createElement('div');
+    colDiv.classList.add('col-md-8');
+
+    const cardBodyDiv = document.createElement('div');
+    cardBodyDiv.classList.add('card-body');
+
+    const title = document.createElement('h5');
+    title.classList.add('card-title');
+    title.textContent = cardTitle;
+
+    const text = document.createElement('p');
+    text.classList.add('card-text');
+    text.textContent = cardText;
+
+    // Append the elements to each other to form the card
+    imgDiv.appendChild(img);
+    cardBodyDiv.appendChild(title);
+    cardBodyDiv.appendChild(text);
+    colDiv.appendChild(cardBodyDiv);
+    rowDiv.appendChild(imgDiv);
+    rowDiv.appendChild(colDiv);
+    innerCardDiv.appendChild(rowDiv);
+    cardDiv.appendChild(innerCardDiv);
+
+    // Append the card to the container element
+    const container = document.getElementById('container');
+    container.appendChild(cardDiv);
+  }
+  }
+  </script>
   <main id="main" class="main">
     <div class="pagetitle">
       <h1>Greenplum CheatSheet</h1>
@@ -85,7 +156,7 @@
       <div class="row">
         <div class="col-lg-6">
           <div class="card">       
-               
+
             <div class="card mb-3">
               <div class="row g-0">
                 <div class="col-md-4">
